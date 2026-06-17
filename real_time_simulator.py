@@ -1,11 +1,16 @@
-requests.post(
-    "https://gameops-control-center.onrender.com/reset"
-)
+
 import requests
 import random
 import time
 
 BASE_URL = "https://gameops-control-center.onrender.com"
+
+# Reset system before simulation
+try:
+    requests.post(f"{BASE_URL}/reset")
+    print("System Reset Complete")
+except Exception as e:
+    print(f"Reset Failed: {e}")
 
 
 active_players = set()

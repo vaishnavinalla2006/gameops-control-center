@@ -441,3 +441,21 @@ def debug():
             "max_response_time"
         )
     }
+@app.post("/reset")
+def reset():
+
+    redis_client.delete("matchmaking_queue")
+    redis_client.delete("queued_players")
+
+    redis_client.delete("matches_created")
+    redis_client.delete("total_join_requests")
+    redis_client.delete("duplicate_requests_blocked")
+    redis_client.delete("players_removed")
+
+    redis_client.delete("response_count")
+    redis_client.delete("total_response_time")
+    redis_client.delete("max_response_time")
+
+    return {
+        "status": "reset_complete"
+    }
