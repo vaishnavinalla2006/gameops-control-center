@@ -98,6 +98,36 @@ function App() {
     }
   };
 
+  const startSimulation = async () => {
+
+  try {
+
+    await axios.post(
+      `${API_URL}/start_simulation`
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+};
+
+const stopSimulation = async () => {
+
+  try {
+
+    await axios.post(
+      `${API_URL}/stop_simulation`
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+};
+
   const changeTrafficMode =
     async (mode) => {
 
@@ -109,6 +139,8 @@ function App() {
             mode: mode
           }
         );
+
+        setHistory([]);
 
         loadMetrics();
 
@@ -246,6 +278,18 @@ function App() {
             onClick={resetSystem}
           >
             🧹 Reset System
+          </button>
+
+          <button
+            onClick={startSimulation}
+          >
+            ▶ Start Simulation
+          </button>
+
+          <button
+            onClick={stopSimulation}
+          >
+            ⏹ Stop Simulation
           </button>
 
         </div>
