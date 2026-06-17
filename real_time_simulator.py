@@ -1,8 +1,12 @@
+requests.post(
+    "https://gameops-control-center.onrender.com/reset"
+)
 import requests
 import random
 import time
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "https://gameops-control-center.onrender.com"
+
 
 active_players = set()
 
