@@ -10,9 +10,12 @@ print("LOADING THE CORRECT MAIN.PY")
 # Redis Connection
 # ==========================
 
+import os
+
 redis_client = redis.Redis(
-    host="localhost",
-    port=6379,
+    host=os.getenv("REDIS_HOST"),
+    port=int(os.getenv("REDIS_PORT")),
+    password=os.getenv("REDIS_PASSWORD"),
     decode_responses=True
 )
 
