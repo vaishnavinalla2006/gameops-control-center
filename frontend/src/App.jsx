@@ -42,12 +42,12 @@ function App() {
 
       const metricsResponse =
         await axios.get(
-          "http://127.0.0.1:8000/metrics"
+          "https://gameops-control-center.onrender.com/metrics"
         );
 
       const healthResponse =
         await axios.get(
-          "http://127.0.0.1:8000/health"
+          "https://gameops-control-center.onrender.com/health"
         );
 
       setMetrics(
