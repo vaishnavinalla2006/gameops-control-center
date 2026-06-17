@@ -13,18 +13,21 @@ import {
 
 import "./App.css";
 
+const API_URL =
+  "https://gameops-control-center.onrender.com";
+
 function App() {
 
   const [metrics, setMetrics] = useState({
-  players_in_queue: 0,
-  matches_created: 0,
-  total_join_requests: 0,
-  duplicate_requests_blocked: 0,
-  players_removed: 0,
-  avg_response_time_ms: 0,
-  max_response_time_ms: 0,
-  traffic_mode: "Normal",
-});
+    players_in_queue: 0,
+    matches_created: 0,
+    total_join_requests: 0,
+    duplicate_requests_blocked: 0,
+    players_removed: 0,
+    avg_response_time_ms: 0,
+    max_response_time_ms: 0,
+    traffic_mode: "NORMAL",
+  });
 
   const [health, setHealth] = useState({
     status: "unknown",
@@ -34,7 +37,8 @@ function App() {
 
   const [history, setHistory] = useState([]);
 
-  const [lastUpdated, setLastUpdated] = useState("");
+  const [lastUpdated, setLastUpdated] =
+    useState("");
 
   const loadMetrics = async () => {
 
@@ -42,12 +46,12 @@ function App() {
 
       const metricsResponse =
         await axios.get(
-          "https://gameops-control-center.onrender.com/metrics"
+          `${API_URL}/metrics`
         );
 
       const healthResponse =
         await axios.get(
-          "https://gameops-control-center.onrender.com/health"
+          `${API_URL}/health`
         );
 
       setMetrics(
@@ -63,15 +67,22 @@ function App() {
       );
 
       setHistory((prev) => [
-        ...prev.slice(-19),
+
+        ...prev.slice(-29),
+
         {
-          time: new Date().toLocaleTimeString(),
+          time:
+            new Date().toLocaleTimeString(),
+
           queue:
-            metricsResponse.data.players_in_queue,
+            metricsResponse.data
+              .players_in_queue,
 
           matches:
-            metricsResponse.data.matches_created
+            metricsResponse.data
+              .matches_created
         }
+
       ]);
 
     } catch (error) {
@@ -83,19 +94,61 @@ function App() {
         backend: "offline",
         redis: "disconnected"
       });
+
     }
   };
+
+  const changeTrafficMode =
+    async (mode) => {
+
+      try {
+
+        await axios.post(
+          `${API_URL}/traffic_mode`,
+          {
+            mode: mode
+          }
+        );
+
+        loadMetrics();
+
+      } catch (error) {
+
+        console.error(error);
+
+      }
+    };
+
+  const resetSystem =
+    async () => {
+
+      try {
+
+        await axios.post(
+          `${API_URL}/reset`
+        );
+
+        loadMetrics();
+
+      } catch (error) {
+
+        console.error(error);
+
+      }
+    };
 
   useEffect(() => {
 
     loadMetrics();
 
-    const interval = setInterval(
-      loadMetrics,
-      1000
-    );
+    const interval =
+      setInterval(
+        loadMetrics,
+        1000
+      );
 
-    return () => clearInterval(interval);
+    return () =>
+      clearInterval(interval);
 
   }, []);
 
@@ -106,88 +159,200 @@ function App() {
       <h1 className="title">
         🎮 GameOps Control Center
       </h1>
+
       <p className="subtitle">
-        Real-Time Matchmaking Monitoring, Traffic Simulation & Reliability Testing
+        Real-Time Matchmaking Monitoring,
+        Traffic Simulation &
+        Reliability Testing
       </p>
 
       <p className="timestamp">
-        Last Updated: {lastUpdated}
+        Last Updated:
+        {" "}
+        {lastUpdated}
       </p>
+
+      {/* TRAFFIC CONTROL */}
+
+      <div className="traffic-panel">
+
+        <h2>
+          🎛 Traffic Control Center
+        </h2>
+
+        <div className="traffic-buttons">
+
+          <button
+            onClick={() =>
+              changeTrafficMode(
+                "NORMAL"
+              )
+            }
+          >
+            🟢 Normal Day
+          </button>
+
+          <button
+            onClick={() =>
+              changeTrafficMode(
+                "PEAK"
+              )
+            }
+          >
+            🟡 Peak Hour
+          </button>
+
+          <button
+            onClick={() =>
+              changeTrafficMode(
+                "LAUNCH"
+              )
+            }
+          >
+            🔴 Launch Day
+          </button>
+
+          <button
+            onClick={() =>
+              changeTrafficMode(
+                "STREAMER"
+              )
+            }
+          >
+            🎥 Streamer Event
+          </button>
+
+          <button
+            onClick={() =>
+              changeTrafficMode(
+                "TOURNAMENT"
+              )
+            }
+          >
+            🏆 Tournament
+          </button>
+
+          <button
+            onClick={() =>
+              changeTrafficMode(
+                "DDOS"
+              )
+            }
+          >
+            ⚫ DDOS Test
+          </button>
+
+          <button
+            onClick={resetSystem}
+          >
+            🧹 Reset System
+          </button>
+
+        </div>
+
+      </div>
 
       <div className="cards">
 
         <div className="card health-card">
-          <h3>Backend Status</h3>
+
+          <h3>
+            Backend Status
+          </h3>
 
           <h2>
-            {health.backend === "running"
+            {health.backend ===
+            "running"
               ? "🟢 Online"
               : "🔴 Offline"}
           </h2>
+
         </div>
 
         <div className="card health-card">
-          <h3>Redis Status</h3>
+
+          <h3>
+            Redis Status
+          </h3>
 
           <h2>
-            {health.redis === "connected"
+            {health.redis ===
+            "connected"
               ? "🟢 Connected"
-              : "🔴 Disconnected"}
+              : "🔴 Offline"}
           </h2>
+
         </div>
+
         <div className="card">
-          <h3>Traffic Mode</h3>
+
+          <h3>
+            Traffic Mode
+          </h3>
 
           <h2>
-            {metrics.traffic_mode ===
-            "Launch Day Surge"
-              ? "🔴 Launch Day"
-
-              : metrics.traffic_mode ===
-                "Peak Hour"
-
-              ? "🟡 Peak Hour"
-
-              : "🟢 Normal"}
+            {metrics.traffic_mode}
           </h2>
+
         </div>
 
         <div className="card">
           <h3>Players In Queue</h3>
-          <h1>{metrics.players_in_queue}</h1>
-        </div>
-
-        <div className="card">
-          <h3>Matches Created</h3>
-          <h1>{metrics.matches_created}</h1>
-        </div>
-
-        <div className="card">
-          <h3>Total Join Requests</h3>
-          <h1>{metrics.total_join_requests}</h1>
-        </div>
-
-        <div className="card">
-          <h3>Duplicates Blocked</h3>
-          <h1>{metrics.duplicate_requests_blocked}</h1>
-        </div>
-
-        <div className="card">
-          <h3>Players Removed</h3>
-          <h1>{metrics.players_removed}</h1>
-        </div>
-
-        <div className="card">
-          <h3>Avg Response Time</h3>
           <h1>
-            {metrics.avg_response_time_ms} ms
+            {metrics.players_in_queue}
           </h1>
         </div>
 
         <div className="card">
-          <h3>Max Response Time</h3>
+          <h3>Matches Created</h3>
           <h1>
-            {metrics.max_response_time_ms} ms
+            {metrics.matches_created}
+          </h1>
+        </div>
+
+        <div className="card">
+          <h3>Total Requests</h3>
+          <h1>
+            {metrics.total_join_requests}
+          </h1>
+        </div>
+
+        <div className="card">
+          <h3>Duplicates</h3>
+          <h1>
+            {
+              metrics
+                .duplicate_requests_blocked
+            }
+          </h1>
+        </div>
+
+        <div className="card">
+          <h3>Players Removed</h3>
+          <h1>
+            {metrics.players_removed}
+          </h1>
+        </div>
+
+        <div className="card">
+          <h3>Avg Response</h3>
+          <h1>
+            {
+              metrics
+                .avg_response_time_ms
+            }
+            ms
+          </h1>
+        </div>
+
+        <div className="card">
+          <h3>Max Response</h3>
+          <h1>
+            {
+              metrics
+                .max_response_time_ms
+            }
+            ms
           </h1>
         </div>
 
@@ -203,13 +368,16 @@ function App() {
           width="100%"
           height={350}
         >
+
           <LineChart data={history}>
 
             <CartesianGrid
               strokeDasharray="3 3"
             />
 
-            <XAxis dataKey="time" />
+            <XAxis
+              dataKey="time"
+            />
 
             <YAxis />
 
@@ -223,6 +391,7 @@ function App() {
             />
 
           </LineChart>
+
         </ResponsiveContainer>
 
       </div>
@@ -237,13 +406,16 @@ function App() {
           width="100%"
           height={350}
         >
+
           <LineChart data={history}>
 
             <CartesianGrid
               strokeDasharray="3 3"
             />
 
-            <XAxis dataKey="time" />
+            <XAxis
+              dataKey="time"
+            />
 
             <YAxis />
 
@@ -257,6 +429,7 @@ function App() {
             />
 
           </LineChart>
+
         </ResponsiveContainer>
 
       </div>

@@ -138,8 +138,8 @@ while True:
     # =========================
 
     delay = random.uniform(
-        0.2,
-        2.0
+        0.01,
+        0.1
     )
 
     time.sleep(delay)

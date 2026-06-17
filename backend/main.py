@@ -49,6 +49,9 @@ class JoinMatchRequest(BaseModel):
 class LeaveQueueRequest(BaseModel):
     player_id: int
 
+class TrafficModeRequest(BaseModel):
+    mode: str
+
 
 # ==========================
 # Helper Functions
@@ -270,7 +273,60 @@ def leave_queue(request: LeaveQueueRequest):
         request.player_id
     }
 
+# ==========================
+# Traffic Control
+# ==========================
 
+@app.post("/traffic_mode")
+def set_traffic_mode(
+    request: TrafficModeRequest
+):
+
+    redis_client.delete(
+        "matchmaking_queue"
+    )
+
+    redis_client.delete(
+        "queued_players"
+    )
+
+    redis_client.delete(
+        "matches_created"
+    )
+
+    redis_client.delete(
+        "total_join_requests"
+    )
+
+    redis_client.delete(
+        "duplicate_requests_blocked"
+    )
+
+    redis_client.delete(
+        "players_removed"
+    )
+
+    redis_client.delete(
+        "response_count"
+    )
+
+    redis_client.delete(
+        "total_response_time"
+    )
+
+    redis_client.delete(
+        "max_response_time"
+    )
+
+    redis_client.set(
+        "traffic_mode",
+        request.mode
+    )
+
+    return {
+        "status": "updated",
+        "mode": request.mode
+    }
 # ==========================
 # Metrics Dashboard
 # ==========================
@@ -304,20 +360,11 @@ def metrics():
             "total_join_requests"
         ) or 0
     )
-
-    traffic_mode = "🟢 Normal"
-
-    if total_requests > 3000:
-
-        traffic_mode = (
-            "🔴 Launch Day Surge"
-        )
-
-    elif total_requests > 1000:
-
-        traffic_mode = (
-            "🟡 Peak Hour"
-        )
+    traffic_mode = (
+        redis_client.get(
+            "traffic_mode"
+        ) or "NORMAL"
+    )
 
     return {
 
@@ -444,18 +491,48 @@ def debug():
 @app.post("/reset")
 def reset():
 
-    redis_client.delete("matchmaking_queue")
-    redis_client.delete("queued_players")
+    redis_client.delete(
+        "matchmaking_queue"
+    )
 
-    redis_client.delete("matches_created")
-    redis_client.delete("total_join_requests")
-    redis_client.delete("duplicate_requests_blocked")
-    redis_client.delete("players_removed")
+    redis_client.delete(
+        "queued_players"
+    )
 
-    redis_client.delete("response_count")
-    redis_client.delete("total_response_time")
-    redis_client.delete("max_response_time")
+    redis_client.delete(
+        "matches_created"
+    )
+
+    redis_client.delete(
+        "total_join_requests"
+    )
+
+    redis_client.delete(
+        "duplicate_requests_blocked"
+    )
+
+    redis_client.delete(
+        "players_removed"
+    )
+
+    redis_client.delete(
+        "response_count"
+    )
+
+    redis_client.delete(
+        "total_response_time"
+    )
+
+    redis_client.delete(
+        "max_response_time"
+    )
+
+    redis_client.set(
+        "traffic_mode",
+        "NORMAL"
+    )
 
     return {
-        "status": "reset_complete"
+        "status":
+        "reset_complete"
     }

@@ -19,6 +19,7 @@ body {
   font-size: 4rem;
   margin-bottom: 10px;
 }
+
 .subtitle {
   text-align: center;
   color: #94a3b8;
@@ -30,21 +31,71 @@ body {
   text-align: center;
   color: #94a3b8;
   margin-bottom: 40px;
+}
+
+.traffic-panel {
+  background: #1e293b;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 40px;
+  text-align: center;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.4);
+}
+
+.traffic-panel h2 {
+  margin-bottom: 20px;
+}
+
+.traffic-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.traffic-buttons button {
+
+  background: #334155;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px 18px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
   font-size: 1rem;
+
+  transition: all 0.3s ease;
+}
+
+.traffic-buttons button:hover {
+
+  background: #38bdf8;
+
+  transform: translateY(-3px);
+
 }
 
 .cards {
+
   display: grid;
 
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(250px, 1fr)
-  );
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(250px,1fr)
+    );
 
   gap: 25px;
 }
 
 .card {
+
   background: #1e293b;
 
   border-radius: 20px;
@@ -54,16 +105,20 @@ body {
   text-align: center;
 
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.4);
+    0 4px 20px rgba(0,0,0,0.4);
 
   transition: all 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-8px);
+
+  transform:
+    translateY(-8px);
+
 }
 
 .card h3 {
+
   color: #94a3b8;
 
   margin-bottom: 20px;
@@ -72,20 +127,25 @@ body {
 }
 
 .card h1 {
+
   color: #38bdf8;
 
-  font-size: 3.5rem;
+  font-size: 3rem;
 }
 
 .card h2 {
+
   font-size: 2rem;
 }
 
 .health-card {
-  border: 2px solid #334155;
+
+  border:
+    2px solid #334155;
 }
 
 .chart-container {
+
   margin-top: 50px;
 
   background: #1e293b;
@@ -95,10 +155,11 @@ body {
   padding: 25px;
 
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.4);
+    0 4px 20px rgba(0,0,0,0.4);
 }
 
 .chart-title {
+
   text-align: center;
 
   margin-bottom: 20px;
@@ -106,18 +167,25 @@ body {
   font-size: 2rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width:768px) {
 
   .title {
+
     font-size: 2.5rem;
+  }
+
+  .traffic-buttons {
+
+    flex-direction: column;
   }
 
   .card h1 {
-    font-size: 2.5rem;
+
+    font-size: 2.2rem;
   }
 
   .card h2 {
-    font-size: 1.5rem;
-  }
 
+    font-size: 1.3rem;
+  }
 }
